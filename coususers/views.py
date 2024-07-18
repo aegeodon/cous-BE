@@ -81,6 +81,7 @@ def kakao_login(request):
         kakao_data = exchange_kakao_access_token(data['access_code'])
         verify_kakao_oidc(kakao_data)
         nickname = extract_kakao_nickname(kakao_data)
+        # nickname = "abc"
         sub = extract_kakao_sub(kakao_data)
     except KakaoAccessTokenException:
         return Response({'detail': 'Access token 교환에 실패했습니다.'}, status=401)

@@ -5,26 +5,26 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 class CousUserManager(BaseUserManager):
     def create_user(self, nickname, kakao_sub, password=None):
-        if not nickname:
-            raise ValueError('User must have a nickname')
+        if not kakao_sub:
+            raise ValueError('User must have a kakao_sub')
         
         user = self.model(
-            nickname=nickname,
+            kakao_sub=kakao_sub,
         )
-        user.kakao_sub = kakao_sub
+        user.nickname = nickname
         user.set_password(password)
         user.save()
         return user
     
     def create_superuser(self, nickname, kakao_sub, password=None):
-        if not nickname:
-            raise ValueError('User must have a nickname')
+        if not kakao_sub:
+            raise ValueError('User must have a kakao_sub')
         
         user = self.model(
-            nickname=nickname,
+            kakao_sub=kakao_sub,
         )
         user.is_admin = True
-        user.kakao_sub = kakao_sub
+        user.nickname = nickname
         user.set_password(password)
         user.save()
         return user
@@ -38,7 +38,7 @@ class CousUser(AbstractBaseUser):
     objects = CousUserManager()
 
     USERNAME_FIELD = 'kakao_sub'
-    REQUIRED_FIELDS = ['nickname']
+    # REQUIRED_FIELDS = ['nickname']
 
     @property
     def is_staff(self):

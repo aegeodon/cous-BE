@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 from dotenv import load_dotenv
 import os
@@ -125,6 +126,9 @@ REST_FRAMEWORK = {
     ),
 }
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60*24),
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
