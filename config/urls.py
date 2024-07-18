@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 from coususers.views import kakao_login, user_my_detail, user_patch
-from courses.views import course_post, course_access_one
+from courses.views import course_access_one, course_access
 from scraps.views import scrap_access, scrap_access_one
 
 urlpatterns = [
@@ -28,8 +28,9 @@ urlpatterns = [
     path('users', user_patch),
     path('users/me', user_my_detail),
     
-    path('courses', course_post),
+    path('courses', course_access),
     path('courses/<int:pk>', course_access_one),
+    
     
     path('scraps', scrap_access),
     path('scraps/<int:pk>', scrap_access_one)

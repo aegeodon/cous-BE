@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 import os
 import base64
@@ -21,33 +21,48 @@ from .serializers import CourseSerializer, CourseResponseSerializer, CoursePostS
 
 # Create your views here.
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 @permission_classes([IsAuthenticated])
-def course_post(request):
-    serializer = CoursePostSerializer(data=request.data)
-    if serializer.is_valid():
-        inputData = serializer.validated_data
+def course_access(request):
+    if request.method == 'POST':
+        serializer = CoursePostSerializer(data=request.data)
+        if serializer.is_valid():
+            inputData = serializer.validated_data
 
-        course = Course(
-            description=inputData['description'],
-            content=inputData['content'],
-            area=inputData['area'],
-            cousUser=request.user
-        )
-        course.save()
+            course = Course(
+                description=inputData['description'],
+                content=inputData['content'],
+                area=inputData['area'],
+                cousUser=request.user
+            )
+            course.save()
 
-        for p in inputData['places']:
-            Place(course=course, address=p['address']).save()
-        for t in inputData['tags']:
-            Tag(course=course, tagName=t['tagName']).save()
+            for p in inputData['places']:
+                Place(course=course, address=p['address']).save()
+            for t in inputData['tags']:
+                Tag(course=course, tagName=t['tagName']).save()
 
-        resSerializer = CourseResponseSerializer(course)
-        return Response(resSerializer.data)
-    return Response(serializer.errors, status=400)
-
-@api_view(['GET'])
-def course_access_one(request, pk):
-    course = Course.objects.get(pk=pk)
+            resSerializer = CourseResponseSerializer(course)
+            return Response(resSerializer.data)
+        return Response(serializer.errors, status=400)
+    elif request.method == 'GET':
+        query = request.GET.get("area", "")
+        if query:
+            queryset = Course.objects.filter(area=query)
+            serializer = CourseResponseSerializer(queryset,many=True)
+            return Response(serializer.data)
+        queryset = Course.objects.all()
+        serializer = CourseResponseSerializer(queryset,many=True)
+        return Response(serializer.data)
     
-    serializer = CourseResponseSerializer(course)
-    return Response(serializer.data)
+
+@api_view(['GET', 'DELETE'])
+def course_access_one(request, pk):
+    if request.method == 'GET':
+        course = get_object_or_404(Course,pk=pk)
+        serializer = CourseResponseSerializer(course)
+        return Response(serializer.data)
+    elif request.method == 'DELETE':
+        course = get_object_or_404(Course,pk=pk) 
+        course.delete()
+        return Response(status=204)
