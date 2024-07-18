@@ -5,6 +5,6 @@ from coususers.models import CousUser
 
 class Course(models.Model):
     cousUser = models.ForeignKey(CousUser, on_delete=models.CASCADE)
-    area = models.IntegerField()
+    area = models.TextField()
     description = models.TextField(max_length=100)
     content = models.TextField(null=False)
